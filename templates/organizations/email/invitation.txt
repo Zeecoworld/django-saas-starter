@@ -1,0 +1,7 @@
+Hi,
+
+{{ invite.invited_by.display_name }} has invited you to join {{ invite.organization.name }}.
+
+Accept your invitation here: {{ accept_url }}
+
+If you weren't expecting this, you can safely ignore this email.

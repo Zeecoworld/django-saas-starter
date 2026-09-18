@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="text-center">
+    <h1 class="text-3xl font-bold text-gray-900">Simple, transparent pricing</h1>
+    <p class="mt-2 text-gray-600">Cancel anytime. No surprises.</p>
+</div>
+
+<div class="mt-10 grid sm:grid-cols-{{ plans|length|default:1 }} gap-6 max-w-4xl mx-auto">
+    {% for plan in plans %}
+    <div class="border border-gray-200 rounded-lg p-6 bg-white">
+        <h2 class="text-lg font-semibold text-gray-900">{{ plan.name }}</h2>
+        <p class="mt-2 text-3xl font-bold text-gray-900">{{ plan.display_price }}<span class="text-sm font-normal text-gray-500">/{{ plan.interval }}</span></p>
+        <ul class="mt-4 space-y-2 text-sm text-gray-600">
+            {% for feature in plan.features %}
+            <li>&check; {{ feature }}</li>
+            {% endfor %}
+        </ul>
+        {% if user.is_authenticated %}
+        <a href="{% url 'billing:checkout' plan.id %}" class="mt-6 block text-center bg-indigo-600 text-white px-4 py-2 rounded-md">
+            Choose {{ plan.name }}
+        </a>
+        {% else %}
+        <a href="{% url 'account_signup' %}" class="mt-6 block text-center bg-indigo-600 text-white px-4 py-2 rounded-md">
+            Sign up to subscribe
+        </a>
+        {% endif %}
+    </div>
+    {% empty %}
+    <p class="text-gray-500 col-span-full">No plans configured yet — add one in the Django admin under Billing &rarr; Plans.</p>
+    {% endfor %}
+</div>
+{% endblock %}

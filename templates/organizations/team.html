@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<h1 class="text-2xl font-bold text-gray-900">Team</h1>
+
+<div class="mt-6 bg-white border border-gray-200 rounded-lg divide-y">
+    {% for membership in members %}
+    <div class="p-4 flex justify-between items-center">
+        <div>
+            <p class="font-medium text-gray-900">{{ membership.user.display_name }}</p>
+            <p class="text-sm text-gray-500">{{ membership.user.email }} &middot; {{ membership.get_role_display }}</p>
+        </div>
+        {% if membership.role != "owner" %}
+        <form method="post" action="{% url 'organizations:remove_member' membership.id %}">
+            {% csrf_token %}
+            <button class="text-sm text-red-600 hover:underline">Remove</button>
+        </form>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+{% if pending_invites %}
+<h2 class="mt-8 font-semibold text-gray-900">Pending invitations</h2>
+<ul class="mt-2 text-sm text-gray-600 list-disc list-inside">
+    {% for invite in pending_invites %}
+    <li>{{ invite.email }} ({{ invite.get_role_display }})</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<div class="mt-8 max-w-md bg-white border border-gray-200 rounded-lg p-6">
+    <h2 class="font-semibold text-gray-900">Invite a teammate</h2>
+    <form method="post" action="{% url 'organizations:invite' %}" class="mt-4">
+        {% csrf_token %}
+        {{ invite_form|crispy }}
+        <button type="submit" class="mt-4 w-full bg-indigo-600 text-white px-4 py-2 rounded-md">Send invite</button>
+    </form>
+</div>
+{% endblock %}

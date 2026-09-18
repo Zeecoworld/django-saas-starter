@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-gray-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Inter', sans-serif; }</style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="h-full">
+    <nav class="bg-white border-b border-gray-200">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <a href="{% url 'core:landing' %}" class="text-xl font-bold text-indigo-600">{{ SITE_NAME }}</a>
+                <div class="flex items-center gap-4">
+                    {% if user.is_authenticated %}
+                        {% if user_organizations %}
+                        <form method="get" action="#" class="hidden sm:block">
+                            <select onchange="window.location.href='/org/switch/'+this.value+'/'"
+                                    class="text-sm border-gray-300 rounded-md">
+                                {% for org in user_organizations %}
+                                <option value="{{ org.id }}" {% if org == current_organization %}selected{% endif %}>{{ org.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </form>
+                        {% endif %}
+                        <a href="{% url 'core:dashboard' %}" class="text-sm text-gray-700 hover:text-indigo-600">Dashboard</a>
+                        <a href="{% url 'organizations:team' %}" class="text-sm text-gray-700 hover:text-indigo-600">Team</a>
+                        <a href="{% url 'account_logout' %}" class="text-sm text-gray-700 hover:text-indigo-600">Log out</a>
+                    {% else %}
+                        <a href="{% url 'billing:pricing' %}" class="text-sm text-gray-700 hover:text-indigo-600">Pricing</a>
+                        <a href="{% url 'account_login' %}" class="text-sm text-gray-700 hover:text-indigo-600">Log in</a>
+                        <a href="{% url 'account_signup' %}" class="text-sm bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">Sign up free</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    {% if messages %}
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 space-y-2">
+        {% for message in messages %}
+        <div class="rounded-md p-3 text-sm {% if message.tags == 'error' %}bg-red-50 text-red-700{% elif message.tags == 'success' %}bg-green-50 text-green-700{% else %}bg-blue-50 text-blue-700{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

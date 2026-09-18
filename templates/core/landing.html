@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="text-center py-20">
+    <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 tracking-tight">
+        Launch your SaaS in days, not months
+    </h1>
+    <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
+        Auth, teams, billing and an API — already wired together so you can focus on the
+        thing that makes your product different.
+    </p>
+    <div class="mt-8 flex justify-center gap-4">
+        <a href="{% url 'account_signup' %}" class="bg-indigo-600 text-white px-6 py-3 rounded-md font-medium hover:bg-indigo-700">
+            Get started free
+        </a>
+        <a href="{% url 'billing:pricing' %}" class="border border-gray-300 px-6 py-3 rounded-md font-medium hover:bg-gray-50">
+            See pricing
+        </a>
+    </div>
+</div>
+
+<div class="grid sm:grid-cols-3 gap-8 mt-12">
+    <div class="p-6 border border-gray-200 rounded-lg">
+        <h3 class="font-semibold text-gray-900">Team accounts, built in</h3>
+        <p class="mt-2 text-sm text-gray-600">Organizations, roles, and invitations work out of the box.</p>
+    </div>
+    <div class="p-6 border border-gray-200 rounded-lg">
+        <h3 class="font-semibold text-gray-900">Stripe billing</h3>
+        <p class="mt-2 text-sm text-gray-600">Checkout, the customer portal, and webhooks are already connected.</p>
+    </div>
+    <div class="p-6 border border-gray-200 rounded-lg">
+        <h3 class="font-semibold text-gray-900">API-ready</h3>
+        <p class="mt-2 text-sm text-gray-600">A DRF API scaffold ships with the starter for your mobile app or integrations.</p>
+    </div>
+</div>
+{% endblock %}

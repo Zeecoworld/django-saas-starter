@@ -1,0 +1,59 @@
+databases:
+  - name: saas-starter-db
+    plan: free
+    postgresMajorVersion: "16"
+
+services:
+  - type: redis
+    name: saas-starter-redis
+    plan: free
+    ipAllowList: []
+
+  - type: web
+    name: saas-starter-web
+    runtime: docker
+    dockerContext: .
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings.production
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: saas-starter-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: saas-starter-redis
+          type: redis
+          property: connectionString
+      - key: SITE_URL
+        value: "https://saas-starter-web.onrender.com"
+      - key: SITE_NAME
+        value: "My SaaS"
+      - key: STRIPE_PUBLIC_KEY
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+    preDeployCommand: python manage.py migrate --settings=config.settings.production
+    startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 3
+
+  - type: worker
+    name: saas-starter-worker
+    runtime: docker
+    dockerContext: .
+    dockerfilePath: ./Dockerfile
+    plan: free
+    startCommand: celery -A config worker -l info
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings.production
+      - fromGroup: saas-starter-web
